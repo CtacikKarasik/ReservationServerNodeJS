@@ -37,4 +37,4 @@ server.on('request', (request, response) => {
         response.end('Page not found, sorry!');
     } 
 });
-server.listen(3070, '127.0.0.1', () => { console.log("Start Node server!") });
+server.listen(3070, 'localhost', () => { console.log("Start Node server!") });
