@@ -1,4 +1,7 @@
 const http = require('http');
+const config = require('../config');
+
+const User = require('../models/user').User;
 
 const server = http.createServer();
 server.on('request', (request, response) => {
@@ -27,7 +30,16 @@ server.on('request', (request, response) => {
                 response.end('Bad request!');
                 return;
             }
+            console.log("body - " + body.nameUser);
             console.log("body - " + body.phoneNumber);
+
+            let user = new User({
+                username: body.nameUser,
+                numberphone: body.phoneNumber
+            });
+
+            user.save().then(() => console.log('SAVE in db'));
+
             response.end('ok');
         });
     } else {
@@ -37,4 +49,4 @@ server.on('request', (request, response) => {
         response.end('Page not found, sorry!');
     } 
 });
-server.listen(3070, 'localhost', () => { console.log("Start Node server!") });
+server.listen(config.get('port'), 'localhost', () => { console.log("Start Node server!") });
