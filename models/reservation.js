@@ -3,6 +3,12 @@ const mongoose = require("../libs/mongoose");
 const Schema = mongoose.Schema;
 
 let schema = new Schema({
+    status:{
+        type: String,
+        default: "registered",
+        unique: false,
+        required: true
+    },
     username:{
         type: String,
         unique: false,
@@ -10,7 +16,7 @@ let schema = new Schema({
     },
     numberphone:{
         type: Number,
-        unique: true,
+        unique: false,
         required: true
     },
     ps4:{
@@ -19,7 +25,7 @@ let schema = new Schema({
         required: false
     },
     numberguests: {
-        type: Integer ,
+        type: Number ,
         unique: false,
         required: true
     },
@@ -30,8 +36,9 @@ let schema = new Schema({
     },
     comment: {
         type: String,
+        default: "empty",
         unique: false,
-        required: true
+        required: false
     }
 });
 

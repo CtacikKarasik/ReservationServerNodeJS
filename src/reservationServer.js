@@ -1,7 +1,7 @@
 const http = require('http');
 const config = require('../config');
-
-const User = require('../models/user').User;
+const dataProcessing = require('../services/dataProcessing');
+//const User = require('../models/user').User;
 
 const server = http.createServer();
 server.on('request', (request, response) => {
@@ -11,9 +11,16 @@ server.on('request', (request, response) => {
 
     response.setHeader('Access-Control-Allow-Origin', '*');
     response.setHeader('Access-Control-Allow-Method', '*');
-    response.setHeader('Access-Control-Allow-Headers', 'origin, content-type, accept');
+    response.setHeader('Access-Control-Allow-Headers', 'origin, content-type, accept, x-cache-header');
 
-   if (request.method == 'OPTIONS') {
+    const cipherKeyValue = request.headers['x-cache-header'];
+    if(request.method != 'OPTIONS' && cipherKeyValue != 'f6b2507a6a3f') {
+        response.writeHead(200);
+        response.end('OK');
+        return;
+    }
+
+    if (request.method == 'OPTIONS') {
         response.writeHead(200);
         response.end('OK');
     } else if (request.url == "/api/reserved" && request.method == 'POST') { 
@@ -22,7 +29,7 @@ server.on('request', (request, response) => {
             body += data;
         })
         .on('end', function() {
-            try{
+            try {
                 body = JSON.parse(body);
             } catch (e) {
                 console.log("body Error- " + body + ' - Error message:' + e);
@@ -33,15 +40,19 @@ server.on('request', (request, response) => {
             console.log("body - " + body.nameUser);
             console.log("body - " + body.phoneNumber);
 
-            let user = new User({
+            /*let user = new User({
                 username: body.nameUser,
                 numberphone: body.phoneNumber
-            });
+            });*/
 
-            user.save().then(() => console.log('SAVE in db'));
-
+            //user.save().then(() => console.log('SAVE in db'));
+            dataProcessing.saveReservationData(body);
             response.end('ok');
         });
+    } else if (request.url == "/api/reservedinfo" && request.method == 'GET') { 
+        //...
+        console.log("Work get request");
+        dataProcessing.getListReservedTables();
     } else {
         response.setHeader( "Content-Type", "text/html");
         response.writeHead(404);
