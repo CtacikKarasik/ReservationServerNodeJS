@@ -1,6 +1,5 @@
 
 function transformReservationDataToSaveInDB(reservationData) {
-    
     let Reservation = {
         user : {
             name : reservationData.nameUser,
@@ -20,7 +19,6 @@ function transformReservationDataToSaveInDB(reservationData) {
 }
 
 function convertToDateTime(dateReserv, timeReserv) {
-
     let dateReservationWithoutTime = getDateReserv(dateReserv);
     let hoursRegex = new RegExp('^[0-9]{1,2}(?<=[:.,-;])');
     let minutesRegex = new RegExp('(?<=[:.,-;])[0-9]{2}$');
@@ -34,11 +32,14 @@ function convertToDateTime(dateReserv, timeReserv) {
 }
 
 function getDateReserv(dateReserv) {
-    let dateNow =  new Date();
     if(dateReserv == 'today') {
-        return dateNow;
-    } else { // tomorrow
-        return dateNow.setDate(dateNow.getDay() + 1);
+        return new Date();
+    } else {
+        let dateResult = new Date();
+        let tomorrow = dateResult.getDate() + 1;
+        dateResult.setDate(tomorrow);
+
+        return dateResult;
     }
 }
 
