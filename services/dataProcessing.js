@@ -46,7 +46,13 @@ function saveReservationData(reservationData) {
     
 }
 
-function getListReservedTables() {
+function getListReservedTables(startDate, endDate, callback) {
+    let startDateTime = new Date(startDate);
+    let endDateTime = new Date(endDate);
+    Reservation.find({$and: [{datereserv : {$gte:startDateTime}}, {datereserv : {$lte:endDateTime}}]}, function(err, doc) {    
+        if(err) return console.log(err);
+        callback(doc);
+    });
 
     console.log("get ListReservedTables ...");
 }

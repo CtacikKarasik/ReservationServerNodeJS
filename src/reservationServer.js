@@ -1,6 +1,7 @@
 const http = require('http');
 const config = require('../config');
 const dataProcessing = require('../services/dataProcessing');
+const url = require('url');
 //const User = require('../models/user').User;
 
 const server = http.createServer();
@@ -49,10 +50,17 @@ server.on('request', (request, response) => {
             dataProcessing.saveReservationData(body);
             response.end('ok');
         });
-    } else if (request.url == "/api/reservedinfo" && request.method == 'GET') { 
-        //...
+    } else if (request.url.indexOf("/api/reservedinfo") > -1 && request.method == 'GET') { 
         console.log("Work get request");
-        dataProcessing.getListReservedTables();
+        let urlRequest = url.parse(request.url, true);
+        console.log("GET Params1: " + urlRequest.query.fromTime); // ! GET Params
+        console.log("GET Params2: " + urlRequest.query.toTime); // ! GET Params
+        dataProcessing.getListReservedTables(urlRequest.query.fromTime, urlRequest.query.toTime, function(db) {
+            response.setHeader( "Content-Type", "application/json");
+            response.writeHead(200);
+            console.log("JSON: " + JSON.stringify(db)); 
+            response.end(JSON.stringify(db));
+        });
     } else {
         response.setHeader( "Content-Type", "text/html");
         response.writeHead(404);
